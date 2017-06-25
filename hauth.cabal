@@ -1,0 +1,70 @@
+name:                hauth
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/caneroj1/hauth#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Joe Canero
+maintainer:          jmc41493@gmail.com
+copyright:           Copyright: (c) 2016 Joe Canero
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Hauth
+  other-modules:       Hauth.Authentication
+                     , Hauth.Authentication.Internals
+  build-depends:       base >= 4.7 && < 5
+                     , jose-jwt
+                     , bcrypt
+                     , securemem
+                     , bytestring
+                     , aeson
+                     , text
+                     , scotty
+                     , scotty-cookie
+                     , wai
+                     , http-types
+                     , cookie
+                     , uuid
+                     , wai-extra
+                     , data-default-class
+  default-language:    Haskell2010
+
+executable hauth-exe
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , hauth
+                     , jose-jwt
+                     , bcrypt
+                     , securemem
+                     , bytestring
+                     , aeson
+                     , text
+                     , scotty
+                     , scotty-cookie
+                     , wai
+                     , http-types
+                     , cookie
+                     , uuid
+                     , wai-extra
+  default-language:    Haskell2010
+
+test-suite hauth-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , hauth
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/caneroj1/hauth
