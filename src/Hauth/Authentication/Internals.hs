@@ -7,14 +7,16 @@ module Hauth.Authentication.Internals
 
 import           Control.Monad
 import           Control.Monad.IO.Class
-import qualified Data.Aeson                as A
-import qualified Data.ByteString.Lazy      as BS
+import qualified Data.Aeson                        as A
+import qualified Data.ByteString.Lazy              as BS
 import           Data.Maybe
-import qualified Data.Text                 as T
-import           Data.UUID                 (UUID)
-import qualified Data.UUID                 as U hiding (UUID)
+import qualified Data.Text                         as T
+import           Data.Time.Clock
+import           Data.UUID                         (UUID)
+import qualified Data.UUID                         as U hiding (UUID)
 import           Data.UUID.V4
 import           Hauth.Authentication
+import           Hauth.Authentication.CookieHelper
 import           Jose.Jwe
 import           Jose.Jwk
 import           Jose.Jwt
@@ -56,7 +58,9 @@ denyAccess = status status403 >> finish
 
 handleEncryptionResult :: CookieConfig -> Either JwtError Jwt -> ActionM ()
 handleEncryptionResult c (Left err)  = logJwtError err >> status status403
-handleEncryptionResult c (Right jwt) = setCookie $ mkCookie c jwt
+handleEncryptionResult c (Right jwt) = do
+  t <- liftIO getCurrentTime
+  setCookie $ mkCookie c t jwt
 
 handleDecryptionResult :: AuthenticationConfig -> Either JwtError JwtContent -> ActionM UUID
 handleDecryptionResult c (Left err) = logJwtError err >> denyAccess
@@ -85,8 +89,6 @@ getAESKey c = EK <$>
 
 -- Using our built encryption key, the encryption config, and claims,
 -- encodes claims in an encrypted JWT.
--- FIXME:
--- consider putting getAESKey in this fn
 encryptJwt :: EncryptionConfig -> EncryptionKey -> AppClaims -> IO (Either JwtError Jwt)
 encryptJwt c (EK aesKey) (AC cs) = jwkEncode alg enc aesKey cs
   where alg = algorithm c
@@ -106,13 +108,15 @@ getJwtFromRequest c = join                .
                       requestHeaders
   where name = cookieName c
 
-mkCookie :: CookieConfig -> Jwt -> SetCookie
-mkCookie c (Jwt j) = def {
+mkCookie :: CookieConfig -> UTCTime -> Jwt -> SetCookie
+mkCookie c t (Jwt j) = def {
     setCookieName     = cookieName c
   , setCookieValue    = j
   , setCookieHttpOnly = True
   , setCookiePath     = Just $ cookiePath c
+  , setCookieExpires  = Just $ secondsFromConfig `addUTCTime` t
   }
+  where secondsFromConfig = secondsForExpiration $ cookieExpiration c
 
 mkClaims :: T.Text -> T.Text -> AppClaims
 mkClaims iss sub = AC . Claims . BS.toStrict $ A.encode JwtClaims {

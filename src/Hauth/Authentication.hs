@@ -58,8 +58,8 @@ instance Default AuthenticationConfig where
 
 mkConfigWithAppAndCookieName :: T.Text -> BS.ByteString -> AuthenticationConfig
 mkConfigWithAppAndCookieName appName cookieName = def {
-    applicationName = "FlowAppAPI"
+    applicationName = appName
   , cookieConfig = def {
-      cookieName = "FlowAppAPICookie"
+      cookieName = cookieName
     }
   }

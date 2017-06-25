@@ -17,6 +17,7 @@ library
   hs-source-dirs:      src
   exposed-modules:     Hauth
   other-modules:       Hauth.Authentication
+                     , Hauth.Authentication.CookieHelper
                      , Hauth.Authentication.Internals
   build-depends:       base >= 4.7 && < 5
                      , jose-jwt
@@ -33,6 +34,7 @@ library
                      , uuid
                      , wai-extra
                      , data-default-class
+                     , time
   default-language:    Haskell2010
 
 executable hauth-exe
