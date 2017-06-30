@@ -16,9 +16,12 @@ import           Web.Scotty
 authenticationConfig :: AuthenticationConfig
 authenticationConfig = mkConfigWithAppAndCookieName "FlowAppAPI" "FlowAppAPICookie"
 
+disableCookies :: AuthenticationConfig -> AuthenticationConfig
+disableCookies ac = ac { cookieConfig = (cookieConfig ac) { cookieDisabled = True } }
+
 main :: IO ()
 main = do
-  (authGuard, authenticator) <- buildAuthenticatorPair authenticationConfig
+  (authGuard, authenticator) <- buildAuthenticatorPair $ disableCookies authenticationConfig
   scotty 3000 $ do
     middleware logStdoutDev
     get "/" $ do
@@ -27,4 +30,4 @@ main = do
     post "/v1/authenticate" $ do
       uuid <- liftIO nextRandom
       authenticator uuid
-      text (T.fromStrict $ toText uuid)
+      -- text (T.fromStrict $ toText uuid)

@@ -32,6 +32,7 @@ data CookieConfig = CookieConfig {
     cookieName       :: BS.ByteString
   , cookieExpiration :: CookieExpiration
   , cookiePath       :: BS.ByteString
+  , cookieDisabled   :: Bool
   }
 
 instance Default CookieConfig where
@@ -39,6 +40,7 @@ instance Default CookieConfig where
       cookieName       = "CHANGE-ME"
     , cookieExpiration = OneDay
     , cookiePath       = "/"
+    , cookieDisabled   = False
     }
 
 data AuthenticationConfig = AuthenticationConfig {
