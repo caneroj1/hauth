@@ -33,10 +33,14 @@ disableCookies ac = ac { cookieConfig = (cookieConfig ac) { cookieDisabled = Tru
 -- routes. It returns a UUID if all authentication is successful.
 ----------------
 -- 2.
--- Use the `authGuard` function to guard this route. It will look for a jwt, decode it, make sure it is valid and not expired, and return the UUID from the token.
+-- Use the `authGuard` function to guard this route. It will look for a jwt,-- decode it, make sure it is valid and not expired, and return the UUID
+--from the token.
 ----------------
 -- 3.
--- Use the `authenticator` function to authenticate a "user" and return a jwt. The `authenticator` accepts a UUID, so presumably this happens after username/password authentication gets the UUID. The jwt returned from the `authenticator` will be checked in the `authGuard`.
+-- Use the `authenticator` function to authenticate a "user" and return a
+-- jwt. The `authenticator` accepts a UUID, so presumably this happens after
+-- username/password authentication gets the UUID. The jwt returned from the
+-- `authenticator` will be checked in the `authGuard`.
 main :: IO ()
 main = do
   -- 1.
