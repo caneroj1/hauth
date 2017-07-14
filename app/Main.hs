@@ -14,7 +14,7 @@ import           Network.Wai.Middleware.RequestLogger
 import           Web.Scotty
 
 authenticationConfig :: AuthenticationConfig
-authenticationConfig = mkConfigWithAppAndCookieName "FlowAppAPI" "FlowAppAPICookie"
+authenticationConfig = mkConfigWithAppAndCookieName "TestAppAPI" "TestAppAPICookie"
 
 disableCookies :: AuthenticationConfig -> AuthenticationConfig
 disableCookies ac = ac { cookieConfig = (cookieConfig ac) { cookieDisabled = True } }
@@ -30,4 +30,3 @@ main = do
     post "/v1/authenticate" $ do
       uuid <- liftIO nextRandom
       authenticator uuid
-      -- text (T.fromStrict $ toText uuid)
